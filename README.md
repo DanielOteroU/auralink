@@ -152,7 +152,7 @@ No está destinado a distribución pública sin autorización del autor.
 
 ## 💬 Autor
 
-**Daniel Otero**  
+**Daniel Otero & Constanza Cabello**  
 📧 [daniel.otero@inacapmail.cl](mailto:daniel.otero@inacapmail.cl)  
 👨‍💻 [Perfil en GitHub](https://github.com/DanielOteroU)  
-💼 AFC Chile — Área Contact Center / Estudiante de Ingeniería Informática
+💼 Estudiante de Ingeniería Informática
