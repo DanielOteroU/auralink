@@ -1,0 +1,188 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Cotizaciones e indicadores{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-3">
+    <h1 class="mb-0">Cotizaciones e indicadores</h1>
+    <div class="ms-3">
+        <button id="btn-refresh" class="btn btn-primary">Actualizar ahora</button>
+        <div id="spinner" class="spinner-border text-primary ms-2" role="status" style="display:none; width:1.25rem; height:1.25rem;"></div>
+    </div>
+</div>
+
+<p class="lead">Valores en pesos chilenos (CLP) y principales indicadores locales. Datos traídos desde APIs públicas.</p>
+
+<div id="cotizaciones-container" class="row gy-4">
+    <!-- Las cotizaciones se inyectarán aquí -->
+    <div id="loading" class="col-12">Cargando cotizaciones...</div>
+</div>
+
+<div id="nota-cache" class="mt-3 text-muted small"></div>
+
+<script>
+// Muestra valor numérico formateado en CLP
+function formatCLP(value){
+    return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value);
+}
+
+// Caching en localStorage con TTL
+const CACHE_KEY = 'auralink_cotizaciones_v1';
+const CACHE_TTL_MS = 1000 * 60 * 10; // 10 minutos
+
+function saveCache(data){
+    const payload = {ts: Date.now(), data};
+    try{ localStorage.setItem(CACHE_KEY, JSON.stringify(payload)); }catch(e){console.warn('No se pudo guardar cache', e)}
+}
+
+function loadCache(){
+    try{
+        const raw = localStorage.getItem(CACHE_KEY);
+        if(!raw) return null;
+        const parsed = JSON.parse(raw);
+        return parsed;
+    }catch(e){ return null; }
+}
+
+function isFresh(cache){
+    if(!cache || !cache.ts) return false;
+    return (Date.now() - cache.ts) <= CACHE_TTL_MS;
+}
+
+function renderFromData(container, indicadores, exchanger, sourceNote){
+    container.innerHTML = '';
+    // indicadores
+    indicadores.forEach(ind => {
+        const col = document.createElement('div');
+        col.className = 'col-12 col-md-6 col-lg-4';
+        col.innerHTML = `
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">${ind.name}</h5>
+                    <p class="display-6 mb-2">${formatCLP(ind.value)}</p>
+                    <small class="text-muted">Fuente: ${sourceNote}</small>
+                </div>
+            </div>
+        `;
+        container.appendChild(col);
+    });
+
+    // divisas
+    const rates = exchanger.rates || {};
+    const currencies = [
+        {code: 'USD', name: 'Dólar estadounidense'},
+        {code: 'EUR', name: 'Euro'},
+        {code: 'ARS', name: 'Peso argentino'},
+        {code: 'COP', name: 'Peso colombiano'},
+        {code: 'BRL', name: 'Real brasileño'},
+        {code: 'PEN', name: 'Sol peruano'},
+        {code: 'MXN', name: 'Peso mexicano'},
+    ];
+
+    currencies.forEach(cur => {
+        const rate = rates[cur.code];
+        if(typeof rate === 'number' && rate > 0){
+            const clpPerUnit = 1 / rate;
+            const col = document.createElement('div');
+            col.className = 'col-12 col-md-6 col-lg-4';
+            col.innerHTML = `
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">${cur.name} (${cur.code})</h5>
+                        <p class="display-6 mb-2">${formatCLP(clpPerUnit)}</p>
+                        <small class="text-muted">Fuente: exchangerate.host</small>
+                    </div>
+                </div>
+            `;
+            container.appendChild(col);
+        }
+    });
+
+    // CLP referencia
+    const clpCol = document.createElement('div');
+    clpCol.className = 'col-12 col-md-6 col-lg-4';
+    clpCol.innerHTML = `
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Peso chileno (CLP)</h5>
+                <p class="display-6 mb-2">${formatCLP(1)}</p>
+                <small class="text-muted">Referencia</small>
+            </div>
+        </div>
+    `;
+    container.appendChild(clpCol);
+}
+
+async function fetchFresh(){
+    const mindicadorPromise = fetch('https://mindicador.cl/api');
+    const symbols = ['USD','EUR','ARS','COP','BRL','PEN','MXN'];
+    const exchangerUrl = `https://api.exchangerate.host/latest?base=CLP&symbols=${symbols.join(',')}`;
+    const exchangerPromise = fetch(exchangerUrl);
+
+    const [mindicadorResp, exchangerResp] = await Promise.all([mindicadorPromise, exchangerPromise]);
+    if(!mindicadorResp.ok) throw new Error('Error obteniendo indicadores chilenos');
+    if(!exchangerResp.ok) throw new Error('Error obteniendo tasas de cambio');
+    const mindicador = await mindicadorResp.json();
+    const exchanger = await exchangerResp.json();
+
+    const indicadores = [];
+    if(mindicador.uf) indicadores.push({code: 'UF', name: 'Unidad de Fomento (UF)', value: mindicador.uf.valor});
+    if(mindicador.utm) indicadores.push({code: 'UTM', name: 'Unidad Tributaria Mensual (UTM)', value: mindicador.utm.valor});
+    if(mindicador.dolar) indicadores.push({code: 'USD (CLP)', name: 'Dólar (según mindicador.cl)', value: mindicador.dolar.valor});
+    if(mindicador.euro) indicadores.push({code: 'EUR (CLP)', name: 'Euro (según mindicador.cl)', value: mindicador.euro.valor});
+
+    return {indicadores, exchanger, ts: Date.now()};
+}
+
+async function loadCotizaciones(options = {forceRefresh: false}){
+    const container = document.getElementById('cotizaciones-container');
+    const loading = document.getElementById('loading');
+    const notaCache = document.getElementById('nota-cache');
+    const btnRefresh = document.getElementById('btn-refresh');
+    const spinner = document.getElementById('spinner');
+
+    const showSpinner = (show) => {
+        if(show){
+            spinner.style.display = 'inline-block';
+            btnRefresh.disabled = true;
+        }else{
+            spinner.style.display = 'none';
+            btnRefresh.disabled = false;
+        }
+    }
+
+    // Intentamos cargar cache inmediatamente (para mostrar algo rápido)
+    const cache = loadCache();
+    if(cache && cache.data && !options.forceRefresh){
+        renderFromData(container, cache.data.indicadores, cache.data.exchanger, 'cache local');
+        notaCache.textContent = `Datos desde caché (actualizados: ${new Date(cache.ts).toLocaleString()}).`;
+        if(isFresh(cache)) return;
+    }
+
+    showSpinner(true);
+    try{
+        const fresh = await fetchFresh();
+        renderFromData(container, fresh.indicadores, fresh.exchanger, 'mindicador.cl / exchangerate.host');
+        saveCache({indicadores: fresh.indicadores, exchanger: fresh.exchanger});
+        notaCache.textContent = `Última actualización: ${new Date(fresh.ts).toLocaleString()}`;
+    }catch(err){
+        console.error('Error obteniendo datos frescos:', err);
+        if(cache && cache.data){
+            notaCache.textContent = `No se pudo actualizar desde la API; mostrando datos en caché (última actualización: ${new Date(cache.ts).toLocaleString()}).`;
+        }else{
+            container.innerHTML = '<div class="col-12"><div class="alert alert-danger">No se pudieron cargar las cotizaciones y no hay datos en caché. Revisa la conexión a internet o intenta más tarde.</div></div>';
+        }
+    }finally{
+        showSpinner(false);
+    }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('btn-refresh');
+    btn.addEventListener('click', () => loadCotizaciones({forceRefresh: true}));
+    loadCotizaciones();
+});
+</script>
+
+{% endblock %}

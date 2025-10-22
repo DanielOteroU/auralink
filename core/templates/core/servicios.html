@@ -1,0 +1,26 @@
+<!-- core/templates/core/servicios.html -->
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Servicios - Auralink{% endblock %}
+
+{% block content %}
+<h1 class="text-center my-5">Nuestros servicios</h1>
+<p class="text-center mb-5">Adaptamos tecnología avanzada e Inteligencia Artificial a las necesidades de tu negocio.</p>
+
+<div class="row g-4">
+    {% for servicio in servicios %}
+    <div class="col-md-6">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h3>{{ servicio.titulo }}</h3>
+                <p>{{ servicio.descripcion }}</p>
+                <img src="{% static 'core/imagenes/' %}{{ servicio.imagen }}" alt="{{ servicio.titulo }}" class="img-fluid mb-3 servicio-img">
+                <a href="{% url 'contacto' %}" class="btn btn-primary">Quiero esto para mi negocio</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+{% endblock %}

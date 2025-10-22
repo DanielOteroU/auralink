@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Auralink{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    {% load static %}
+
+    <!-- CSS propio -->
+    <link rel="stylesheet" href="{% static 'core/style.css' %}">
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Header / Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'inicio' %}">
+                <img src="{% static 'core/imagenes/auralinklogo.png' %}" alt="Auralink Logo" class="logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'inicio' %}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/servicios/' %}active{% endif %}" href="{% url 'servicios' %}">Servicios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/contacto/' %}active{% endif %}" href="{% url 'contacto' %}">Contacto</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/lista_contactos/' %}active{% endif %}" href="{% url 'lista_contactos' %}">Lista de Contactos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/servicios-api/' %}active{% endif %}" href="{% url 'servicios_api' %}">Servicios (API)</a>
+                    </li>
+                </ul>
+                <a class="btn btn-primary ms-3" href="{% url 'contacto' %}">Contáctanos</a>
+                {% if request.user.is_authenticated %}
+                    <form method="post" action="{% url 'logout' %}" class="d-inline ms-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-light">Cerrar sesión</button>
+                    </form>
+                {% else %}
+                    <a class="btn btn-outline-light ms-2" href="{% url 'login' %}">Iniciar sesión</a>
+                    <a class="btn btn-secondary ms-2" href="{% url 'register' %}">Registrarse</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="container my-5">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p>&copy; 2025 Auralink. Todos los derechos reservados.</p>
+            {% block footer_links %}
+            <div>
+                <a href="#" class="text-white me-3">
+                    <img src="{% static 'core/imagenes/politicas.png' %}" alt="Privacidad" style="height:20px;vertical-align:middle;margin-right:6px;">
+                    Políticas de privacidad
+                </a>
+                <a href="https://www.facebook.com/" class="text-white me-3">
+                    <img src="{% static 'core/imagenes/facebook.png' %}" alt="Facebook" style="height:20px;vertical-align:middle;margin-right:6px;">
+                    Facebook
+                </a>
+                <a href="https://www.instagram.com/" class="text-white me-3">
+                    <img src="{% static 'core/imagenes/instagram.png' %}" alt="Instagram" style="height:20px;vertical-align:middle;margin-right:6px;">
+                    Instagram
+                </a>
+            </div>
+            {% endblock %}
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JS propio -->
+    <script src="{% static 'core/script.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,202 @@
+/* ===============================
+   General
+================================= */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #00195e !important; /* Fondo suave */
+    color: #ffffff;
+}
+
+/* ===============================
+   Header / Navbar
+================================= */
+.navbar {
+    padding: 0.5rem 1rem; /* menos espacio arriba/abajo y lados */
+    background-color: #000000 !important;
+    position: relative;
+    min-height: auto; /* que la altura dependa del contenido */
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #ffffff !important;
+}
+
+.navbar-brand img {
+    height: 40%;   /* aumenta el tamaño */
+    width: auto;     /* mantiene proporción */
+}
+
+
+
+.nav-link {
+    color: #ffffff !important;
+}
+.nav-link:hover {
+    color: #0119f1 !important; /* Bootstrap */
+}
+
+.icono-personalizado {
+    width: 80px;   /* Ajusta el ancho según lo que necesites */
+    height: auto;  /* Mantiene la proporción */
+}
+
+
+
+/* ===============================
+   Hero
+================================= */
+.hero-banner {
+    position: relative;
+    min-height: 550px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+}
+
+.hero-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    opacity: 1.0; /* Ajusta la opacidad para que el texto sea legible */
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+}
+
+/* ===============================
+   Beneficios / Servicios
+================================= */
+.card {
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+.card h5 {
+    font-weight: 600;
+}
+.card p, .card ul {
+    font-size: 0.95rem;
+}
+
+.servicio-img {
+    max-width: 200px; /* Ajusta el ancho según lo que necesites */
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.card-body ul {
+    display: table;
+    margin: 0 auto 1.5rem auto; /* 1.5rem de espacio debajo de la lista */
+    text-align: left;
+}
+
+/* ===============================
+   Sección de Iconos
+================================= */
+.bi {
+    color: #0d6efd;
+}
+.row.text-center i {
+    transition: transform 0.3s, color 0.3s;
+}
+.row.text-center i:hover {
+    transform: scale(1.2);
+    color: #ffc107;
+}
+
+/* ===============================
+   Botones
+================================= */
+.btn-primary {
+    border-radius: 50px;
+    padding: 0.6rem 1.5rem;
+    font-weight: bold;
+}
+.btn-outline-primary {
+    border-radius: 50px;
+    transition: all 0.3s;
+}
+.btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+/* ===============================
+   Formulario
+================================= */
+form label {
+    font-weight: 500;
+}
+form input, form textarea {
+    border-radius: 10px;
+    border: 1px solid #ced4da;
+}
+form input:focus, form textarea:focus {
+    box-shadow: 0 0 5px rgba(13,110,253,0.5);
+    border-color: #0d6efd;
+}
+
+/* ===============================
+   Footer
+================================= */
+footer {
+    background-color: #000000 !important;
+    color: #fff;
+    padding: 40px 20px;
+}
+footer a {
+    color: #ffc107 !important;
+    text-decoration: none;
+}
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* ===============================
+   Responsivo
+================================= */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+    .hero p {
+        font-size: 1rem;
+    }
+}
+
+.logo {
+    max-width: 180px;   /* tamaño máximo en escritorio */
+    height: auto;       /* mantiene proporciones */
+    display: block;
+}
+
+/* En tablet/móviles */
+@media (max-width: 768px) {
+    .logo {
+        max-width: 120px;
+    }
+}
+
+/* En celulares más pequeños */
+@media (max-width: 480px) {
+    .logo {
+        max-width: 90px;
+    }
+}

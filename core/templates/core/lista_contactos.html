@@ -1,0 +1,106 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Lista de Contactos - Auralink{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Clientes Registrados</h1>
+
+    <!-- Botones para cambiar vista -->
+    <div class="text-center mb-4">
+        <button id="btnTabla" class="btn btn-primary">Vista Tabla</button>
+        <button id="btnCards" class="btn btn-secondary">Vista Cards</button>
+    </div>
+
+    <!-- Vista en Tabla -->
+    <div id="vistaTabla" class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Teléfono</th>
+                    <th scope="col">Empresa</th>
+                    <th scope="col">Mensaje</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contacto in contactos %}
+                <tr>
+                    <td>{{ contacto.nombre }}</td>
+                    <td>{{ contacto.email }}</td>
+                    <td>{{ contacto.telefono }}</td>
+                    <td>{{ contacto.empresa }}</td>
+                    <td>{{ contacto.mensaje }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No hay contactos registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Vista en Cards -->
+    <div id="vistaCards" class="row g-3" style="display:none;">
+        {% for contacto in contactos %}
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">{{ contacto.nombre }}</h5>
+                    <p class="card-text"><strong>Email:</strong> {{ contacto.email }}</p>
+                    <p class="card-text"><strong>Teléfono:</strong> {{ contacto.telefono|default:"No registrado" }}</p>
+                    <p class="card-text"><strong>Empresa:</strong> {{ contacto.empresa|default:"No registrado" }}</p>
+                    <p class="card-text"><strong>Mensaje:</strong> {{ contacto.mensaje }}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No hay contactos registrados.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    const btnTabla = document.getElementById("btnTabla");
+    const btnCards = document.getElementById("btnCards");
+    const vistaTabla = document.getElementById("vistaTabla");
+    const vistaCards = document.getElementById("vistaCards");
+
+    // Cargar preferencia guardada
+    document.addEventListener("DOMContentLoaded", () => {
+        let vistaGuardada = localStorage.getItem("vistaContactos");
+        if (vistaGuardada === "cards") {
+            mostrarCards();
+        } else {
+            mostrarTabla();
+        }
+    });
+
+    btnTabla.addEventListener("click", () => {
+        mostrarTabla();
+        localStorage.setItem("vistaContactos", "tabla");
+    });
+
+    btnCards.addEventListener("click", () => {
+        mostrarCards();
+        localStorage.setItem("vistaContactos", "cards");
+    });
+
+    function mostrarTabla() {
+        vistaTabla.style.display = "block";
+        vistaCards.style.display = "none";
+        btnTabla.classList.replace("btn-secondary", "btn-primary");
+        btnCards.classList.replace("btn-primary", "btn-secondary");
+    }
+
+    function mostrarCards() {
+        vistaTabla.style.display = "none";
+        vistaCards.style.display = "flex";
+        btnCards.classList.replace("btn-secondary", "btn-primary");
+        btnTabla.classList.replace("btn-primary", "btn-secondary");
+    }
+</script>
+{% endblock %}

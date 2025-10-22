@@ -1,0 +1,92 @@
+<!-- core/templates/core/inicio.html -->
+{% extends 'core/base.html' %}
+{% load static %}
+
+
+{% block title %}Inicio - Auralink{% endblock %}
+
+{% block content %}
+<!-- Sección Hero -->
+<div class="hero-banner position-relative overflow-hidden bg-light rounded">
+    <!-- Video de fondo -->
+    <video autoplay muted loop playsinline class="hero-video">
+        <source src="{% static 'core/videos/video.mp4' %}" type="video/mp4">
+        Tu navegador no soporta la etiqueta de video.
+    </video>
+
+    <!-- Contenido encima del video -->
+    <div class="hero-content position-absolute top-50 start-50 translate-middle text-center text-white">
+        <h1 class="display-4">{{ titulo }}</h1>
+        <p class="lead">{{ subtitulo }}</p>
+        <a href="{% url 'contacto' %}" class="btn btn-primary btn-lg mt-3">¡Contáctanos!</a>
+    </div>
+</div>
+
+
+<!-- Beneficios / ¿Por qué Auralink? -->
+<div class="row text-center my-5">
+    <div class="col-md-4">
+        <i class="bi bi-lightning-charge display-3 text-primary"></i>
+        <img src="{% static 'core/imagenes/icono1.png' %}" alt="Imagen de ejemplo" class="img-fluid mb-3 icono-personalizado">
+        <h4 class="mt-3">Innovación</h4>
+        <p>Soluciones tecnológicas avanzadas para tu empresa.</p>
+    </div>
+    <div class="col-md-4">
+        <i class="bi bi-graph-up display-3 text-success"></i>
+        <img src="{% static 'core/imagenes/icono2.png' %}" alt="Imagen de ejemplo" class="img-fluid mb-3 icono-personalizado">
+        <h4 class="mt-3">Resultados</h4>
+        <p>Maximizamos tus oportunidades y rendimiento digital.</p>
+    </div>
+    <div class="col-md-4">
+        <i class="bi bi-people display-3 text-warning"></i>
+        <img src="{% static 'core/imagenes/icono3.png' %}" alt="Imagen de ejemplo" class="img-fluid mb-3 icono-personalizado">
+        <h4 class="mt-3">Confianza</h4>
+        <p>Nos comprometemos con cada proyecto como propio.</p>
+    </div>
+</div>
+
+<!-- Servicios destacados -->
+<h2 class="text-center my-4 mb-5">Nuestros principales servicios</h2>
+<div class="row text-center">
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Desarrollo Web Inteligente</h5>
+                <p class="card-text">Sitios modernos, adaptativos y optimizados.</p>
+                <img src="{% static 'core/imagenes/post1.png' %}" alt="Imagen de ejemplo" class="img-fluid mb-3">
+                <a href="{% url 'servicios' %}" class="btn btn-outline-primary">Ver más</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Marketing Digital</h5>
+                <p class="card-text">Estrategias que convierten visitas en ventas.</p>
+                <img src="{% static 'core/imagenes/post2.png' %}" alt="Imagen de ejemplo" class="img-fluid mb-3">
+                <a href="{% url 'servicios' %}" class="btn btn-outline-primary">Ver más</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Inteligencia Artificial</h5>
+                <p class="card-text">Automatización y análisis predictivo de datos.</p>
+                <img src="{% static 'core/imagenes/post3.png' %}" alt="Imagen de ejemplo" class="img-fluid mb-3">
+                <a href="{% url 'servicios' %}" class="btn btn-outline-primary">Ver más</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Mantenimiento Web</h5>
+                <p class="card-text">Soporte, actualizaciones y seguridad 24/7.</p>
+                <img src="{% static 'core/imagenes/post4.png' %}" alt="Imagen de ejemplo" class="img-fluid mb-3">
+                <a href="{% url 'servicios' %}" class="btn btn-outline-primary">Ver más</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

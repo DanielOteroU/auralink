@@ -1,0 +1,86 @@
+{% extends 'core/base.html' %}
+{% load static widget_tweaks %}
+
+{% block title %}Contacto - Auralink{% endblock %}
+
+{% block content %}
+<h1 class="text-center my-5">Contacto</h1>
+
+<div class="row justify-content-center">
+  <div class="col-md-6">
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <form id="contactoForm" method="POST" novalidate>
+      {% csrf_token %}
+
+      {% for field in form %}
+        <div class="mb-3">
+          {{ field.label_tag }}
+
+          {% if field.errors %}
+            {{ field|add_class:"form-control is-invalid" }}
+            <div class="invalid-feedback">
+              {% for error in field.errors %}{{ error }}{% endfor %}
+            </div>
+          {% else %}
+            {{ field|add_class:"form-control" }}
+            <div class="invalid-feedback">Por favor completa este campo correctamente.</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="btn btn-primary w-100">Enviar</button>
+    </form>
+
+    <p class="text-center mt-4">{{ mensaje }}</p>
+
+    <div class="text-center mt-2">
+      <a href="https://wa.me/569XXXXXXXX" class="btn btn-success">¡Hablemos ahora por WhatsApp!</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('contactoForm').addEventListener('submit', function(e) {
+    let valido = true;
+
+    this.querySelectorAll('input, textarea, select').forEach(function(campo) {
+        campo.classList.remove('is-invalid');
+        let mensaje = "";
+
+        if (!campo.validity.valid) {
+            campo.classList.add('is-invalid');
+            valido = false;
+
+            if (campo.validity.valueMissing) {
+                mensaje = "Este campo es obligatorio.";
+            } else if (campo.validity.typeMismatch) {
+                mensaje = "El formato ingresado es incorrecto.";
+            } else if (campo.validity.tooShort) {
+                mensaje = `Debe tener al menos ${campo.minLength} caracteres.`;
+            } else if (campo.validity.tooLong) {
+                mensaje = `Debe tener máximo ${campo.maxLength} caracteres.`;
+            } else if (campo.validity.patternMismatch) {
+                mensaje = "El valor ingresado no coincide con el formato esperado.";
+            }
+
+            let feedback = campo.parentElement.querySelector('.invalid-feedback');
+            if (feedback) feedback.textContent = mensaje;
+        }
+    });
+
+    if (!valido) e.preventDefault();
+});
+</script>
+{% endblock %}
