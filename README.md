@@ -25,8 +25,8 @@ Sigue estos pasos para clonar y ejecutar el proyecto en tu equipo local:
 Abre tu terminal y ejecuta:
 
 ```bash
-git clone https://github.com/DanielOteroU/Auralink2.git
-cd Auralink2
+git clone https://github.com/DanielOteroU/Auralink.git
+cd Auralink
 ```
 
 ---
@@ -87,7 +87,7 @@ Luego abre tu navegador en:
 ## 🧩 Estructura del proyecto
 
 ```
-Auralink2/
+Auralink/
 │
 ├── core/                  # Aplicaciones y configuración principal de Django
 ├── auralink_new/          # Módulos adicionales o nuevas funcionalidades
